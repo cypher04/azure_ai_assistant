@@ -7,15 +7,15 @@ data "gitlab_project" "project" {
 
 resource "gitlab_project_environment" "default_branch" {
   project = data.gitlab_project.project.id
-  name    = "gitlab_project"
-  external_url = "https://gitlab.com/${var.gitlab_namespace}/${var.gitlab_project_name}/-/environments/${var.default_branch}"
+  name    = var.default_branch
+  external_url = "${var.gitlab_base_url}/${var.gitlab_namespace}/${var.gitlab_project_name}/-/environments/${var.default_branch}"
 }
 
 // gitlab branch protection
 
 resource "gitlab_branch_protection" "example" {
   project = data.gitlab_project.project.id
-  branch  = "main"
+  branch  = var.default_branch
   allowed_to_push = [ 
     {
     access_level = "maintainer"
