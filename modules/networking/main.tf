@@ -7,21 +7,21 @@ resource "azurerm_virtual_network" "hub-vnet" {
   name                = "hub-vnet"
   location            = var.location
   resource_group_name = azurerm_resource_group.networking-rg.name
-  address_space       = var.address_space
+  address_space       = [var.address_space[0]]
 }
 
 resource "azurerm_virtual_network" "ai-spoke-vnet" {
   name                = "ai-spoke-vnet"
   location            = var.location
   resource_group_name = azurerm_resource_group.networking-rg.name
-  address_space       = var.address_space
+  address_space       = [var.address_space[1]]
 }
 
 resource "azurerm_virtual_network" "data-spoke-vnet" {
   name                = "data-spoke-vnet"
   location            = var.location
   resource_group_name = azurerm_resource_group.networking-rg.name
-  address_space       = var.address_space
+  address_space       = [var.address_space[2]]
 }
 
 // subnet for hub virtual network
@@ -109,11 +109,11 @@ resource "azurerm_route_table" "hub-route-table" {
   location            = var.location
   resource_group_name = azurerm_resource_group.networking-rg.name
 
-  route {
-    name                   = "hub-route"
-    address_prefix         = "0.0.0.0/0"
-    next_hop_type          = "Internet"
-  }
+#   route {
+#     name                   = "hub-route"
+#     address_prefix         = "0.0.0.0/0"
+#     next_hop_type          = "Internet"
+#   }
 
 
 }
@@ -129,12 +129,12 @@ resource "azurerm_route_table" "ai-spoke-route-table" {
   location            = var.location
   resource_group_name = azurerm_resource_group.networking-rg.name
 
-  route {
-    name                   = "ai-spoke-route"
-    address_prefix         = "0.0.0.0/0"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = azurerm_subnet.hub-subnet.address_prefixes[0]
-  }
+#   route {
+#     name                   = "ai-spoke-route"
+#     address_prefix         = "0.0.0.0/0"
+#     next_hop_type          = "VirtualAppliance"
+#     next_hop_in_ip_address = azurerm_subnet.hub-subnet.address_prefixes[0]
+#   }
   
 
 }
@@ -150,12 +150,12 @@ resource "azurerm_route_table" "data-spoke-route-table" {
   location            = var.location
   resource_group_name = azurerm_resource_group.networking-rg.name
 
-  route {
-    name                   = "data-spoke-route"
-    address_prefix         = "0.0.0.0/0"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = azurerm_subnet.hub-subnet.address_prefixes[0]
-  }
+#   route {
+#     name                   = "data-spoke-route"
+#     address_prefix         = "0.0.0.0/0"
+#     next_hop_type          = "VirtualAppliance"
+#     next_hop_in_ip_address = azurerm_subnet.hub-subnet.address_prefixes[0]
+#   }
 
 }
 
@@ -166,13 +166,13 @@ resource "azurerm_subnet_route_table_association" "data-spoke-subnet-association
 
 
 /////////// public IP for firewall
-resource "azurerm_public_ip" "networking-firewall-pip" {
-  name                = "networking-firewall-pip"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.networking-rg.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-}
+# resource "azurerm_public_ip" "networking-firewall-pip" {
+#   name                = "networking-firewall-pip"
+#   location            = var.location
+#   resource_group_name = azurerm_resource_group.networking-rg.name
+#   allocation_method   = "Static"
+#   sku                 = "Standard"
+# }
 
 ////////// firewall
 
