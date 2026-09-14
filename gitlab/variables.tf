@@ -3,6 +3,7 @@
 variable "gitlab_token" {
   description = "GitLab personal access token"
   type        = string
+  sensitive   = true
 }
 
 variable "gitlab_base_url" {
