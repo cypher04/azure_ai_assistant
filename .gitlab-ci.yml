@@ -1,0 +1,89 @@
+
+stages:
+  - validate
+  - plan
+  - apply
+  - destroy
+  
+variables:
+  TF_ROOT: env/dev
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "false"
+
+default:
+  image:
+    name: hashicorp/terraform:1.9.8
+    entrypoint: [""]          # the image's entrypoint is terraform itself
+  cache:
+    key: "$CI_COMMIT_REF_NAME-$CI_JOB_NAME-$TF_ROOT"
+    paths:
+      - $TF_ROOT/.terraform
+
+# Everything Azure-touching extends this. One before_script only —
+#  overwrites the key, it does not concatenate.
+.azure:
+  id_tokens:
+    AZURE_ID_TOKEN:
+      aud: https://gitlab.com   # must equal the federated credential's audience
+  before_script:
+    - export ARM_USE_OIDC=true
+    - export ARM_OIDC_TOKEN="$AZURE_ID_TOKEN"
+    - export ARM_CLIENT_ID="$AZUREAD_CLIENT_ID"
+    - export ARM_TENANT_ID="$AZUREAD_TENANT_ID"
+    - export ARM_SUBSCRIPTION_ID="$AZUREAD_SUBSCRIPTION_ID"
+    - cd "$TF_ROOT"
+    - terraform init -input=false
+
+# No Azure credentials needed, so this runs on every branch and MR.
+validate:
+  stage: validate
+  script:
+    - terraform -chdir="$TF_ROOT" fmt -check -recursive
+    - terraform -chdir="$TF_ROOT" init -backend=false -input=false
+    - terraform -chdir="$TF_ROOT" validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE
+
+plan:
+  stage: plan
+  extends: .azure
+  script:
+    - terraform -chdir="$TF_ROOT" plan -out=tfplan
+    - terraform -chdir="$TF_ROOT" show -no-color tfplan
+  artifacts:
+    paths:
+      - $TF_ROOT/tfplan       # artifact paths are relative to the project dir
+    expire_in: 7 days
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+apply:
+  stage: apply
+  extends: .azure
+  script:
+    - terraform -chdir="$TF_ROOT" apply -auto-approve tfplan
+  dependencies:
+    - plan
+  environment:
+    name: main              # matches gitlab_project_environment.default_branch_env
+  resource_group: tf-dev    # serializes applies — never two at once on one state
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: false
+
+
+destroy:
+  stage: destroy
+  extends: .azure
+  script:
+    - terraform -chdir="$TF_ROOT" destroy -auto-approve
+  environment:
+    name: main
+  resource_group: tf-dev
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: false
+
