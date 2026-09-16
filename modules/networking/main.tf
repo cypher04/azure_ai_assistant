@@ -54,49 +54,49 @@ resource "azurerm_subnet" "data-spoke-subnet" {
 
 /////////////////////// peer all three vnets
 resource "azurerm_virtual_network_peering" "hub-to-ai-spoke" {
-  name                      = "hub-to-ai-spoke"
-  resource_group_name       = azurerm_resource_group.networking-rg.name
-  virtual_network_name      = azurerm_virtual_network.hub-vnet.name
-  remote_virtual_network_id = azurerm_virtual_network.ai-spoke-vnet.id
+  name                         = "hub-to-ai-spoke"
+  resource_group_name          = azurerm_resource_group.networking-rg.name
+  virtual_network_name         = azurerm_virtual_network.hub-vnet.name
+  remote_virtual_network_id    = azurerm_virtual_network.ai-spoke-vnet.id
   allow_virtual_network_access = true
 }
 resource "azurerm_virtual_network_peering" "ai-spoke-to-hub" {
-  name                      = "ai-spoke-to-hub"
-  resource_group_name       = azurerm_resource_group.networking-rg.name
-  virtual_network_name      = azurerm_virtual_network.ai-spoke-vnet.name
-  remote_virtual_network_id = azurerm_virtual_network.hub-vnet.id
+  name                         = "ai-spoke-to-hub"
+  resource_group_name          = azurerm_resource_group.networking-rg.name
+  virtual_network_name         = azurerm_virtual_network.ai-spoke-vnet.name
+  remote_virtual_network_id    = azurerm_virtual_network.hub-vnet.id
   allow_virtual_network_access = true
 }
 
 resource "azurerm_virtual_network_peering" "hub-to-data-spoke" {
-  name                      = "hub-to-data-spoke"
-  resource_group_name       = azurerm_resource_group.networking-rg.name
-  virtual_network_name      = azurerm_virtual_network.hub-vnet.name
-  remote_virtual_network_id = azurerm_virtual_network.data-spoke-vnet.id
+  name                         = "hub-to-data-spoke"
+  resource_group_name          = azurerm_resource_group.networking-rg.name
+  virtual_network_name         = azurerm_virtual_network.hub-vnet.name
+  remote_virtual_network_id    = azurerm_virtual_network.data-spoke-vnet.id
   allow_virtual_network_access = true
 }
 
 resource "azurerm_virtual_network_peering" "data-spoke-to-hub" {
-  name                      = "data-spoke-to-hub"
-  resource_group_name       = azurerm_resource_group.networking-rg.name
-  virtual_network_name      = azurerm_virtual_network.data-spoke-vnet.name
-  remote_virtual_network_id = azurerm_virtual_network.hub-vnet.id
+  name                         = "data-spoke-to-hub"
+  resource_group_name          = azurerm_resource_group.networking-rg.name
+  virtual_network_name         = azurerm_virtual_network.data-spoke-vnet.name
+  remote_virtual_network_id    = azurerm_virtual_network.hub-vnet.id
   allow_virtual_network_access = true
 }
 
 resource "azurerm_virtual_network_peering" "ai-spoke-to-data-spoke" {
-  name                      = "ai-spoke-to-data-spoke"
-  resource_group_name       = azurerm_resource_group.networking-rg.name
-  virtual_network_name      = azurerm_virtual_network.ai-spoke-vnet.name
-  remote_virtual_network_id = azurerm_virtual_network.data-spoke-vnet.id
+  name                         = "ai-spoke-to-data-spoke"
+  resource_group_name          = azurerm_resource_group.networking-rg.name
+  virtual_network_name         = azurerm_virtual_network.ai-spoke-vnet.name
+  remote_virtual_network_id    = azurerm_virtual_network.data-spoke-vnet.id
   allow_virtual_network_access = true
 }
 
 resource "azurerm_virtual_network_peering" "data-spoke-to-ai-spoke" {
-  name                      = "data-spoke-to-ai-spoke"
-  resource_group_name       = azurerm_resource_group.networking-rg.name
-  virtual_network_name      = azurerm_virtual_network.data-spoke-vnet.name
-  remote_virtual_network_id = azurerm_virtual_network.ai-spoke-vnet.id
+  name                         = "data-spoke-to-ai-spoke"
+  resource_group_name          = azurerm_resource_group.networking-rg.name
+  virtual_network_name         = azurerm_virtual_network.data-spoke-vnet.name
+  remote_virtual_network_id    = azurerm_virtual_network.ai-spoke-vnet.id
   allow_virtual_network_access = true
 }
 
@@ -109,11 +109,11 @@ resource "azurerm_route_table" "hub-route-table" {
   location            = var.location
   resource_group_name = azurerm_resource_group.networking-rg.name
 
-#   route {
-#     name                   = "hub-route"
-#     address_prefix         = "0.0.0.0/0"
-#     next_hop_type          = "Internet"
-#   }
+  #   route {
+  #     name                   = "hub-route"
+  #     address_prefix         = "0.0.0.0/0"
+  #     next_hop_type          = "Internet"
+  #   }
 
 
 }
@@ -129,13 +129,13 @@ resource "azurerm_route_table" "ai-spoke-route-table" {
   location            = var.location
   resource_group_name = azurerm_resource_group.networking-rg.name
 
-#   route {
-#     name                   = "ai-spoke-route"
-#     address_prefix         = "0.0.0.0/0"
-#     next_hop_type          = "VirtualAppliance"
-#     next_hop_in_ip_address = azurerm_subnet.hub-subnet.address_prefixes[0]
-#   }
-  
+  #   route {
+  #     name                   = "ai-spoke-route"
+  #     address_prefix         = "0.0.0.0/0"
+  #     next_hop_type          = "VirtualAppliance"
+  #     next_hop_in_ip_address = azurerm_subnet.hub-subnet.address_prefixes[0]
+  #   }
+
 
 }
 
@@ -150,12 +150,12 @@ resource "azurerm_route_table" "data-spoke-route-table" {
   location            = var.location
   resource_group_name = azurerm_resource_group.networking-rg.name
 
-#   route {
-#     name                   = "data-spoke-route"
-#     address_prefix         = "0.0.0.0/0"
-#     next_hop_type          = "VirtualAppliance"
-#     next_hop_in_ip_address = azurerm_subnet.hub-subnet.address_prefixes[0]
-#   }
+  #   route {
+  #     name                   = "data-spoke-route"
+  #     address_prefix         = "0.0.0.0/0"
+  #     next_hop_type          = "VirtualAppliance"
+  #     next_hop_in_ip_address = azurerm_subnet.hub-subnet.address_prefixes[0]
+  #   }
 
 }
 
