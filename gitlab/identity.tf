@@ -15,9 +15,9 @@ resource "azuread_service_principal" "gitlab_sp" {
 }
 
 resource "azuread_application_federated_identity_credential" "gitlab_fed_id_cred" {
-  issuer                = var.gitlab_base_url
-  subject               = "project_path:${var.gitlab_namespace}/${var.gitlab_project_name}:ref_type:branch:ref:${var.default_branch}"
-  audiences             = [var.gitlab_base_url]
-  application_id        = azuread_application.gitlab_app.id
-  display_name = "gitlab-federated-identity-credential"
+  issuer         = var.gitlab_base_url
+  subject        = "project_path:${var.gitlab_namespace}/${var.gitlab_project_name}:ref_type:branch:ref:${var.default_branch}"
+  audiences      = [var.gitlab_base_url]
+  application_id = azuread_application.gitlab_app.id
+  display_name   = "gitlab-federated-identity-credential"
 }
