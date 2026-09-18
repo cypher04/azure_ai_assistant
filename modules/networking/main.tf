@@ -210,6 +210,8 @@ resource "azurerm_network_security_group" "hub-subnet-nsg" {
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
     source_address_prefix      = "VirtualNetwork"
     destination_address_prefix = "VirtualNetwork"
   }
@@ -219,6 +221,38 @@ resource "azurerm_subnet_network_security_group_association" "hub-subnet-nsg-ass
   subnet_id                 = azurerm_subnet.hub-subnet.id
   network_security_group_id = azurerm_network_security_group.hub-subnet-nsg.id
 }
+
+
+// outbound rules for hub subnet
+resource "azurerm_network_security_group" "hub-subnet-outbound-nsg" {
+  name                = "hub-subnet-outbound-nsg"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.networking-rg.name
+
+  security_rule {
+    name                       = "allow-outbound"
+    priority                   = 100
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "VirtualNetwork"
+    destination_address_prefix = "VirtualNetwork"
+  }
+}
+
+resource "azurerm_subnet_network_security_group_association" "hub-subnet-outbound-nsg-association" {
+  subnet_id                 = azurerm_subnet.hub-subnet.id
+  network_security_group_id = azurerm_network_security_group.hub-subnet-outbound-nsg.id
+}
+
+
+
+
+
+
+
 
 // network security group for data-spoke subnet
 resource "azurerm_network_security_group" "data-spoke-subnet-nsg" {
@@ -232,6 +266,8 @@ resource "azurerm_network_security_group" "data-spoke-subnet-nsg" {
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
     source_address_prefix      = "VirtualNetwork"
     destination_address_prefix = "VirtualNetwork"
   }
@@ -241,6 +277,30 @@ resource "azurerm_subnet_network_security_group_association" "data-spoke-subnet-
   subnet_id                 = azurerm_subnet.data-spoke-subnet.id
   network_security_group_id = azurerm_network_security_group.data-spoke-subnet-nsg.id
 }
+
+// outbound rules for data-spoke subnet
+resource "azurerm_network_security_group" "data-spoke-subnet-outbound-nsg" {
+  name                = "data-spoke-subnet-outbound-nsg"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.networking-rg.name
+
+  security_rule {
+    name                       = "allow-outbound"
+    priority                   = 100
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "VirtualNetwork"
+    destination_address_prefix = "VirtualNetwork"
+  }
+}
+resource "azurerm_subnet_network_security_group_association" "data-spoke-subnet-outbound-nsg-association" {
+  subnet_id                 = azurerm_subnet.data-spoke-subnet.id
+  network_security_group_id = azurerm_network_security_group.data-spoke-subnet-outbound-nsg.id
+}
+
 
 // network security group for ai-spoke subnet
 resource "azurerm_network_security_group" "ai-spoke-subnet-nsg" {
@@ -254,6 +314,8 @@ resource "azurerm_network_security_group" "ai-spoke-subnet-nsg" {
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
     source_address_prefix      = "VirtualNetwork"
     destination_address_prefix = "VirtualNetwork"
   }
@@ -264,4 +326,25 @@ resource "azurerm_subnet_network_security_group_association" "ai-spoke-subnet-ns
   network_security_group_id = azurerm_network_security_group.ai-spoke-subnet-nsg.id
 }
 
+// outbound rules for ai-spoke subnet
+resource "azurerm_network_security_group" "ai-spoke-subnet-outbound-nsg" {
+  name                = "ai-spoke-subnet-outbound-nsg"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.networking-rg.name
 
+  security_rule {
+    name                       = "allow-outbound"
+    priority                   = 100
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "VirtualNetwork"
+    destination_address_prefix = "VirtualNetwork"
+  }
+}
+resource "azurerm_subnet_network_security_group_association" "ai-spoke-subnet-outbound-nsg-association" {
+  subnet_id                 = azurerm_subnet.ai-spoke-subnet.id
+  network_security_group_id = azurerm_network_security_group.ai-spoke-subnet-outbound-nsg.id
+}
