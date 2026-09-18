@@ -32,6 +32,13 @@ resource "azurerm_subnet" "hub-subnet" {
   address_prefixes     = [var.subnet_prefixes["hub-subnet"]]
 }
 
+resource "azurerm_subnet" "AzureFirewallSubnet" {
+  name                 = "AzureFirewallSubnet"
+  resource_group_name  = azurerm_resource_group.networking-rg.name
+  virtual_network_name = azurerm_virtual_network.hub-vnet.name
+  address_prefixes     = [var.subnet_prefixes["AzureFirewallSubnet"]]
+}
+
 // subnet for AI spoke virtual network
 resource "azurerm_subnet" "ai-spoke-subnet" {
   name                 = "ai-spoke-subnet"
