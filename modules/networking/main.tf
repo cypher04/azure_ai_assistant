@@ -242,11 +242,6 @@ resource "azurerm_network_security_group" "hub-subnet-outbound-nsg" {
   }
 }
 
-resource "azurerm_subnet_network_security_group_association" "hub-subnet-outbound-nsg-association" {
-  subnet_id                 = azurerm_subnet.hub-subnet.id
-  network_security_group_id = azurerm_network_security_group.hub-subnet-outbound-nsg.id
-}
-
 
 
 
@@ -296,10 +291,6 @@ resource "azurerm_network_security_group" "data-spoke-subnet-outbound-nsg" {
     destination_address_prefix = "VirtualNetwork"
   }
 }
-resource "azurerm_subnet_network_security_group_association" "data-spoke-subnet-outbound-nsg-association" {
-  subnet_id                 = azurerm_subnet.data-spoke-subnet.id
-  network_security_group_id = azurerm_network_security_group.data-spoke-subnet-outbound-nsg.id
-}
 
 
 // network security group for ai-spoke subnet
@@ -343,8 +334,4 @@ resource "azurerm_network_security_group" "ai-spoke-subnet-outbound-nsg" {
     source_address_prefix      = "VirtualNetwork"
     destination_address_prefix = "VirtualNetwork"
   }
-}
-resource "azurerm_subnet_network_security_group_association" "ai-spoke-subnet-outbound-nsg-association" {
-  subnet_id                 = azurerm_subnet.ai-spoke-subnet.id
-  network_security_group_id = azurerm_network_security_group.ai-spoke-subnet-outbound-nsg.id
 }
