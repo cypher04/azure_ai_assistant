@@ -1,6 +1,6 @@
 location = "East us"
 subnet_prefixes = {
-  hub-subnet        = "10.1.0.0/24",
+  hub-subnet         = "10.1.0.0/24",
   firewall-subnet    = "10.1.1.0/24",
   app-gateway-subnet = "10.1.2.0/24",
   nat-gateway-subnet = "10.1.3.0/24",
