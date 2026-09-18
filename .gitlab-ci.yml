@@ -31,8 +31,7 @@ default:
     - export ARM_CLIENT_ID="$AZUREAD_CLIENT_ID"
     - export ARM_TENANT_ID="$AZUREAD_TENANT_ID"
     - export ARM_SUBSCRIPTION_ID="$AZUREAD_SUBSCRIPTION_ID"
-    - cd "$TF_ROOT"
-    - terraform init -input=false
+    - terraform -chdir="$TF_ROOT" init -input=false
 
 # No Azure credentials needed, so this runs on every branch and MR.
 validate:
