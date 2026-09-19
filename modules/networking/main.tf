@@ -339,8 +339,7 @@ resource "azurerm_private_endpoint" "openai-priv-endpoint" {
   name                = "openai-priv-endpoint"
   location            = var.location
   resource_group_name = azurerm_resource_group.networking-rg.name
-
-  subnet_id = azurerm_subnet.ai-spoke-subnet.id
+  subnet_id           = azurerm_subnet.ai-spoke-subnet.id
 
   private_service_connection {
     name                           = "openai-privateserviceconnection"
@@ -349,12 +348,18 @@ resource "azurerm_private_endpoint" "openai-priv-endpoint" {
   }
 }
 
+resource "azurerm_private_dns_zone_virtual_network_link" "openai-dns-zone-vnet-link" {
+  name                  = "openai-dns-zone-vnet-link"
+  resource_group_name   = azurerm_resource_group.networking-rg.name
+  virtual_network_id    = azurerm_virtual_network.ai-spoke-vnet.id
+  private_dns_zone_name = "privatelink.openai.azure.com"
+}
+
 resource "azurerm_private_endpoint" "storage-priv-endpoint" {
   name                = "storage-priv-endpoint"
   location            = var.location
   resource_group_name = azurerm_resource_group.networking-rg.name
-
-  subnet_id = azurerm_subnet.ai-spoke-subnet.id
+  subnet_id           = azurerm_subnet.ai-spoke-subnet.id
 
   private_service_connection {
     name                           = "storage-privateserviceconnection"
@@ -363,17 +368,29 @@ resource "azurerm_private_endpoint" "storage-priv-endpoint" {
   }
 }
 
+resource "azurerm_private_dns_zone_virtual_network_link" "storage-dns-zone-vnet-link" {
+  name                  = "storage-dns-zone-vnet-link"
+  resource_group_name   = azurerm_resource_group.networking-rg.name
+  virtual_network_id    = azurerm_virtual_network.ai-spoke-vnet.id
+  private_dns_zone_name = "privatelink.blob.core.windows.net"
+}
 resource "azurerm_private_endpoint" "keyvault-priv-endpoint" {
   name                = "keyvault-priv-endpoint"
   location            = var.location
   resource_group_name = azurerm_resource_group.networking-rg.name
-
-  subnet_id = azurerm_subnet.ai-spoke-subnet.id
+  subnet_id           = azurerm_subnet.ai-spoke-subnet.id
 
   private_service_connection {
     name                           = "keyvault-privateserviceconnection"
     private_connection_resource_id = azurerm_private_dns_zone.keyvault-dns-zone.id
     is_manual_connection           = false
   }
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "keyvault-dns-zone-vnet-link" {
+  name                  = "keyvault-dns-zone-vnet-link"
+  resource_group_name   = azurerm_resource_group.networking-rg.name
+  virtual_network_id    = azurerm_virtual_network.ai-spoke-vnet.id
+  private_dns_zone_name = "privatelink.vaultcore.azure.net"
 }
 
