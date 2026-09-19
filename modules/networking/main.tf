@@ -315,82 +315,88 @@ resource "azurerm_subnet_network_security_group_association" "ai-spoke-subnet-ns
 
 ////////////// Private DNS Zones //////////////////////
 
-// private dns for openai
-resource "azurerm_private_dns_zone" "openai-dns-zone" {
-  name                = "privatelink.openai.azure.com"
-  resource_group_name = azurerm_resource_group.networking-rg.name
-}
+# // private dns for openai
+# resource "azurerm_private_dns_zone" "openai-dns-zone" {
+#   name                = "privatelink.openai.azure.com"
+#   resource_group_name = azurerm_resource_group.networking-rg.name
+# }
 
-// private dns for storage
-resource "azurerm_private_dns_zone" "storage-dns-zone" {
-  name                = "privatelink.blob.core.windows.net"
-  resource_group_name = azurerm_resource_group.networking-rg.name
-}
+# // private dns for storage
+# resource "azurerm_private_dns_zone" "storage-dns-zone" {
+#   name                = "privatelink.blob.core.windows.net"
+#   resource_group_name = azurerm_resource_group.networking-rg.name
+# }
 
-// private dns for key vault
-resource "azurerm_private_dns_zone" "keyvault-dns-zone" {
-  name                = "privatelink.vaultcore.azure.net"
-  resource_group_name = azurerm_resource_group.networking-rg.name
-}
+# // private dns for key vault
+# resource "azurerm_private_dns_zone" "keyvault-dns-zone" {
+#   name                = "privatelink.vaultcore.azure.net"
+#   resource_group_name = azurerm_resource_group.networking-rg.name
+# }
 
-///////////////// private endpoints //////////////////////
+# ///////////////// private endpoints //////////////////////
 
-resource "azurerm_private_endpoint" "openai-priv-endpoint" {
-  name                = "openai-priv-endpoint"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.networking-rg.name
-  subnet_id           = azurerm_subnet.ai-spoke-subnet.id
+# resource "azurerm_private_endpoint" "openai-priv-endpoint" {
+#   name                = "openai-priv-endpoint"
+#   location            = var.location
+#   resource_group_name = azurerm_resource_group.networking-rg.name
+#   subnet_id           = azurerm_subnet.ai-spoke-subnet.id
 
-  private_service_connection {
-    name                           = "openai-privateserviceconnection"
-    private_connection_resource_id = azurerm_private_dns_zone.openai-dns-zone.id
-    is_manual_connection           = false
-  }
-}
+#   private_service_connection {
+#     name                           = "openai-privateserviceconnection"
+#     private_connection_resource_id = azurerm_private_dns_zone.openai-dns-zone.id
+#     is_manual_connection           = false
+#     subresource_names              = ["account"]
+#   }
 
-resource "azurerm_private_dns_zone_virtual_network_link" "openai-dns-zone-vnet-link" {
-  name                  = "openai-dns-zone-vnet-link"
-  resource_group_name   = azurerm_resource_group.networking-rg.name
-  virtual_network_id    = azurerm_virtual_network.ai-spoke-vnet.id
-  private_dns_zone_name = "privatelink.openai.azure.com"
-}
+#   private_dns_zone_group {
+#     name = "openai-dns-zone-group"
+#     private_dns_zone_ids = [azurerm_private_dns_zone.openai-dns-zone.id]
+#   }
+# }
 
-resource "azurerm_private_endpoint" "storage-priv-endpoint" {
-  name                = "storage-priv-endpoint"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.networking-rg.name
-  subnet_id           = azurerm_subnet.ai-spoke-subnet.id
+# resource "azurerm_private_dns_zone_virtual_network_link" "openai-dns-zone-vnet-link" {
+#   name                  = "openai-dns-zone-vnet-link"
+#   resource_group_name   = azurerm_resource_group.networking-rg.name
+#   virtual_network_id    = azurerm_virtual_network.ai-spoke-vnet.id
+#   private_dns_zone_name = "privatelink.openai.azure.com"
+# }
 
-  private_service_connection {
-    name                           = "storage-privateserviceconnection"
-    private_connection_resource_id = azurerm_private_dns_zone.storage-dns-zone.id
-    is_manual_connection           = false
-  }
-}
+# resource "azurerm_private_endpoint" "storage-priv-endpoint" {
+#   name                = "storage-priv-endpoint"
+#   location            = var.location
+#   resource_group_name = azurerm_resource_group.networking-rg.name
+#   subnet_id           = azurerm_subnet.ai-spoke-subnet.id
 
-resource "azurerm_private_dns_zone_virtual_network_link" "storage-dns-zone-vnet-link" {
-  name                  = "storage-dns-zone-vnet-link"
-  resource_group_name   = azurerm_resource_group.networking-rg.name
-  virtual_network_id    = azurerm_virtual_network.ai-spoke-vnet.id
-  private_dns_zone_name = "privatelink.blob.core.windows.net"
-}
-resource "azurerm_private_endpoint" "keyvault-priv-endpoint" {
-  name                = "keyvault-priv-endpoint"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.networking-rg.name
-  subnet_id           = azurerm_subnet.ai-spoke-subnet.id
+#   private_service_connection {
+#     name                           = "storage-privateserviceconnection"
+#     private_connection_resource_id = azurerm_private_dns_zone.storage-dns-zone.id
+#     is_manual_connection           = false
+#   }
+# }
 
-  private_service_connection {
-    name                           = "keyvault-privateserviceconnection"
-    private_connection_resource_id = azurerm_private_dns_zone.keyvault-dns-zone.id
-    is_manual_connection           = false
-  }
-}
+# resource "azurerm_private_dns_zone_virtual_network_link" "storage-dns-zone-vnet-link" {
+#   name                  = "storage-dns-zone-vnet-link"
+#   resource_group_name   = azurerm_resource_group.networking-rg.name
+#   virtual_network_id    = azurerm_virtual_network.ai-spoke-vnet.id
+#   private_dns_zone_name = "privatelink.blob.core.windows.net"
+# }
+# resource "azurerm_private_endpoint" "keyvault-priv-endpoint" {
+#   name                = "keyvault-priv-endpoint"
+#   location            = var.location
+#   resource_group_name = azurerm_resource_group.networking-rg.name
+#   subnet_id           = azurerm_subnet.ai-spoke-subnet.id
 
-resource "azurerm_private_dns_zone_virtual_network_link" "keyvault-dns-zone-vnet-link" {
-  name                  = "keyvault-dns-zone-vnet-link"
-  resource_group_name   = azurerm_resource_group.networking-rg.name
-  virtual_network_id    = azurerm_virtual_network.ai-spoke-vnet.id
-  private_dns_zone_name = "privatelink.vaultcore.azure.net"
-}
+#   private_service_connection {
+#     name                           = "keyvault-privateserviceconnection"
+#     private_connection_resource_id = azurerm_private_dns_zone.keyvault-dns-zone.id
+#     is_manual_connection           = false
+#   }
+# }
+
+# resource "azurerm_private_dns_zone_virtual_network_link" "keyvault-dns-zone-vnet-link" {
+#   name                  = "keyvault-dns-zone-vnet-link"
+#   resource_group_name   = azurerm_resource_group.networking-rg.name
+#   virtual_network_id    = azurerm_virtual_network.ai-spoke-vnet.id
+#   private_dns_zone_name = "privatelink.vaultcore.azure.net"
+# }
 
