@@ -59,7 +59,7 @@ resource "azurerm_subnet" "data-spoke-subnet" {
 
 
 
-/////////////////////// peer all three vnets
+/////////////////////// peer all three vnets //////////////////////
 resource "azurerm_virtual_network_peering" "hub-to-ai-spoke" {
   name                         = "hub-to-ai-spoke"
   resource_group_name          = azurerm_resource_group.networking-rg.name
@@ -110,7 +110,7 @@ resource "azurerm_virtual_network_peering" "data-spoke-to-ai-spoke" {
 
 
 
-////////////////////// user defined route
+////////////////////// user defined route //////////////////////
 resource "azurerm_route_table" "hub-route-table" {
   name                = "hub-route-table"
   location            = var.location
@@ -198,7 +198,7 @@ resource "azurerm_subnet_route_table_association" "data-spoke-subnet-association
 # }
 
 
-////////////////// network security group for hub subnet
+////////////////// network security group for hub subnet /////////////////////
 resource "azurerm_network_security_group" "hub-subnet-nsg" {
   name                = "hub-subnet-nsg"
   location            = var.location
@@ -312,3 +312,68 @@ resource "azurerm_subnet_network_security_group_association" "ai-spoke-subnet-ns
   subnet_id                 = azurerm_subnet.ai-spoke-subnet.id
   network_security_group_id = azurerm_network_security_group.ai-spoke-subnet-nsg.id
 }
+
+////////////// Private DNS Zones //////////////////////
+
+// private dns for openai
+resource "azurerm_private_dns_zone" "openai-dns-zone" {
+  name                = "privatelink.openai.azure.com"
+  resource_group_name = azurerm_resource_group.networking-rg.name
+}
+
+// private dns for storage
+resource "azurerm_private_dns_zone" "storage-dns-zone" {
+  name                = "privatelink.blob.core.windows.net"
+  resource_group_name = azurerm_resource_group.networking-rg.name
+}
+
+// private dns for key vault
+resource "azurerm_private_dns_zone" "keyvault-dns-zone" {
+  name                = "privatelink.vaultcore.azure.net"
+  resource_group_name = azurerm_resource_group.networking-rg.name
+}
+
+///////////////// private endpoints //////////////////////
+
+resource "azurerm_private_endpoint" "openai-priv-endpoint" {
+  name                = "openai-priv-endpoint"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.networking-rg.name
+
+  subnet_id = azurerm_subnet.ai-spoke-subnet.id
+
+  private_service_connection {
+    name                           = "openai-privateserviceconnection"
+    private_connection_resource_id = azurerm_private_dns_zone.openai-dns-zone.id
+    is_manual_connection           = false
+  }
+}
+
+resource "azurerm_private_endpoint" "storage-priv-endpoint" {
+  name                = "storage-priv-endpoint"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.networking-rg.name
+
+  subnet_id = azurerm_subnet.ai-spoke-subnet.id
+
+  private_service_connection {
+    name                           = "storage-privateserviceconnection"
+    private_connection_resource_id = azurerm_private_dns_zone.storage-dns-zone.id
+    is_manual_connection           = false
+  }
+}
+
+resource "azurerm_private_endpoint" "keyvault-priv-endpoint" {
+  name                = "keyvault-priv-endpoint"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.networking-rg.name
+
+  subnet_id = azurerm_subnet.ai-spoke-subnet.id
+
+  private_service_connection {
+    name                           = "keyvault-privateserviceconnection"
+    private_connection_resource_id = azurerm_private_dns_zone.keyvault-dns-zone.id
+    is_manual_connection           = false
+  }
+}
+
