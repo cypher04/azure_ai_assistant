@@ -2,10 +2,10 @@
 
 output "subnet_ids" {
   value = {
-    hub_subnet_id        = azurerm_subnet.hub-subnet.id
+    hub_subnet_id            = azurerm_subnet.hub-subnet.id
     azure_firewall_subnet_id = azurerm_subnet.AzureFirewallSubnet.id
-    ai_spoke_subnet_id   = azurerm_subnet.ai-spoke-subnet.id
-    data_spoke_subnet_id = azurerm_subnet.data-spoke-subnet.id
+    ai_spoke_subnet_id       = azurerm_subnet.ai-spoke-subnet.id
+    data_spoke_subnet_id     = azurerm_subnet.data-spoke-subnet.id
   }
 }
 
