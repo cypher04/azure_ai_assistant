@@ -8,6 +8,7 @@ module "networking" {
   location        = var.location
   subnet_prefixes = var.subnet_prefixes
   address_space   = var.address_space
+  cognitive_account_id = module.compute.cognitive_account_id
 }
 
 module "compute" {

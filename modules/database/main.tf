@@ -3,7 +3,13 @@ resource "azurerm_resource_group" "database-rg" {
   location = var.location
 }
 
-// storage account for ai //////////////////////
+resource "random_string" "suffix" {
+  length  = 4
+  upper   = false
+  special = false
+}
+
+///////////////////// storage account for ai //////////////////////
 resource "azurerm_storage_account" "ai_storage" {
   name                          = "aistorage${random_string.suffix.result}"
   resource_group_name           = azurerm_resource_group.database-rg.name
@@ -12,14 +18,6 @@ resource "azurerm_storage_account" "ai_storage" {
   account_replication_type      = "LRS"
   https_traffic_only_enabled    = true
   public_network_access_enabled = false
-
-
-}
-
-resource "random_string" "suffix" {
-  length  = 6
-  upper   = false
-  special = false
 }
 
 resource "azurerm_storage_container" "documents" {
