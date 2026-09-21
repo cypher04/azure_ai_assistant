@@ -73,5 +73,3 @@ resource "azurerm_cognitive_account_rai_policy" "cognitive-rai-policy" {
     source             = "Prompt"
   }
 }
-
-
