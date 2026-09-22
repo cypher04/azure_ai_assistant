@@ -73,3 +73,14 @@ resource "azurerm_cognitive_account_rai_policy" "cognitive-rai-policy" {
     source             = "Prompt"
   }
 }
+
+/////////////////////    search service    //////////////////////
+resource "azurerm_search_service" "search-service" {
+  name                          = "search-service"
+  location                      = var.location
+  resource_group_name           = azurerm_resource_group.compute-rg.name
+  sku                           = "Standard"
+  semantic_search_sku           = "free"
+  local_authentication_enabled  = true
+  public_network_access_enabled = true
+}
