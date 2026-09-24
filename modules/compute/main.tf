@@ -76,11 +76,27 @@ resource "azurerm_cognitive_account_rai_policy" "cognitive-rai-policy" {
 
 /////////////////////    search service    //////////////////////
 resource "azurerm_search_service" "search-service" {
-  name                          = "search-service"
+  name                          = "search${random_string.search_service_suffix.result}"
   location                      = var.location
   resource_group_name           = azurerm_resource_group.compute-rg.name
-  sku                           = "Standard"
+  sku                           = "standard"
   semantic_search_sku           = "free"
-  local_authentication_enabled  = true
+  local_authentication_enabled  = false
   public_network_access_enabled = true
+}
+
+resource "random_string" "search_service_suffix" {
+  length  = 6
+  upper   = false
+  lower   = true
+  special = false
+}
+
+
+///////////////////// search private link service //////////////////////
+resource "azurerm_search_shared_private_link_service" "search-api-key" {
+  search_service_id = azurerm_search_service.search-service.id
+  name               = "search-private-link-service"
+  subresource_name    = "blob"
+  target_resource_id   = var.ai_storage_id
 }
