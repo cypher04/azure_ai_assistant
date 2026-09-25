@@ -59,6 +59,31 @@ resource "azurerm_cognitive_deployment" "cognitive-deployment" {
   ]
 }
 
+///////////////////// embedding deployment //////////////////////
+
+resource "azurerm_cognitive_deployment" "embedding-deployment" {
+  name                 = "embedding"
+  cognitive_account_id = azurerm_cognitive_account.cognitive-account.id
+  rai_policy_name      = azurerm_cognitive_account_rai_policy.cognitive-rai-policy.name
+  sku {
+    name     = "GlobalStandard"
+    capacity = 5
+  }
+
+  model {
+    name    = "embedding"
+    format  = "OpenAI"
+    version = "2024-11-20"
+  }
+
+  depends_on = [
+    azurerm_cognitive_account.cognitive-account
+  ]
+}
+
+
+
+
 ///////////////////// cognitive account rai policy //////////////////////
 resource "azurerm_cognitive_account_rai_policy" "cognitive-rai-policy" {
   cognitive_account_id = azurerm_cognitive_account.cognitive-account.id
