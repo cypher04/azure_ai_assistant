@@ -1,0 +1,14 @@
+{
+  "name": "documents",
+  "fields": [
+    { "name": "id",       "type": "Edm.String", "key": true, "filterable": true },
+    { "name": "content",  "type": "Edm.String", "searchable": true },
+    { "name": "title",    "type": "Edm.String", "searchable": true, "sortable": true },
+    { "name": "embedding","type": "Collection(Edm.Single)", "searchable": true,
+      "dimensions": 1536, "vectorSearchProfile": "default-profile" }
+  ],
+  "vectorSearch": {
+    "algorithms": [{ "name": "hnsw-config", "kind": "hnsw" }],
+    "profiles":   [{ "name": "default-profile", "algorithm": "hnsw-config" }]
+  }
+}
