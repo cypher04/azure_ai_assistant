@@ -120,8 +120,8 @@ resource "random_string" "search_service_suffix" {
 
 ///////////////////// search private link service //////////////////////
 resource "azurerm_search_shared_private_link_service" "search-api-key" {
-  search_service_id = azurerm_search_service.search-service.id
+  search_service_id  = azurerm_search_service.search-service.id
   name               = "search-private-link-service"
-  subresource_name    = "blob"
-  target_resource_id   = var.ai_storage_id
+  subresource_name   = "blob"
+  target_resource_id = var.ai_storage_id
 }
