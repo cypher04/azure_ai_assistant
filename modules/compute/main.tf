@@ -64,16 +64,15 @@ resource "azurerm_cognitive_deployment" "cognitive-deployment" {
 resource "azurerm_cognitive_deployment" "embedding-deployment" {
   name                 = "embedding"
   cognitive_account_id = azurerm_cognitive_account.cognitive-account.id
-  rai_policy_name      = azurerm_cognitive_account_rai_policy.cognitive-rai-policy.name
   sku {
     name     = "GlobalStandard"
     capacity = 5
   }
 
   model {
-    name    = "embedding"
+    name    = "text-embedding-3-small"
     format  = "OpenAI"
-    version = "2024-11-20"
+    version = "1"
   }
 
   depends_on = [
