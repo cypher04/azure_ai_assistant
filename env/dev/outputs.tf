@@ -1,4 +1,4 @@
-output "search_endpoint" {  
+output "search_endpoint" {
   value = module.compute.search_endpoint
 }
 
