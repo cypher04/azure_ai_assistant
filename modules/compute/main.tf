@@ -123,4 +123,6 @@ resource "azurerm_search_shared_private_link_service" "search-api-key" {
   name               = "search-private-link-service"
   subresource_name   = "blob"
   target_resource_id = var.ai_storage_id
+  /////////////////////     message for approver   //////////////////////
+  request_message = "Approve access from Azure AI Search to the AI storage account"
 }
