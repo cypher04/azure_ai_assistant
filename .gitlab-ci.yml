@@ -59,20 +59,6 @@ plan:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-
-# app-deploy:
-#   stage: app-deploy
-#   extends: .azure
-#   script:
-#     - echo "Deploying the app..."
-#   environment:
-#     name: main
-#   resource_group: tf-dev
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-#       when: manual
-#       allow_failure: false
-
 apply:
   stage: apply
   extends: .azure
@@ -88,6 +74,18 @@ apply:
       when: manual
       allow_failure: false
 
+app-deploy:
+  stage: app-deploy
+  extends: .azure
+  script:
+    - echo "Deploying the app..."
+  environment:
+    name: main
+  resource_group: tf-dev
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: false
 
 destroy:
   stage: destroy
