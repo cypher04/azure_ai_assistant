@@ -25,7 +25,7 @@ resource "azuread_application_federated_identity_credential" "gitlab_fed_id_cred
 /////////////////////   identity for app     //////////////////////
 
 resource "azuread_application" "gitlab_ai_assistant_app" {
-  display_name     = "gitlab-ai-assistant-"
+  display_name     = "gitlab-ai-assistant-app"
   sign_in_audience = "AzureADMyOrg"
   owners           = [data.azurerm_client_config.current.object_id]
 }
