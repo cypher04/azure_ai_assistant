@@ -3,6 +3,7 @@ stages:
   - validate
   - plan
   - apply
+  - app-deploy
   - destroy
   
 variables:
@@ -32,6 +33,21 @@ default:
     - export ARM_TENANT_ID="$AZUREAD_TENANT_ID"
     - export ARM_SUBSCRIPTION_ID="$AZUREAD_SUBSCRIPTION_ID"
     - terraform -chdir="$TF_ROOT" init -input=false
+
+# Azure app-specific configuration — signs in with az CLI as the app principal
+.azure-app:
+  image: mcr.microsoft.com/azure-cli:latest
+  id_tokens:
+    AZURE_ID_TOKEN:
+      aud: https://gitlab.com   # must equal the federated credential's audience
+  before_script:
+    - az login --service-principal
+        --username "$AZUREAD_APP_CLIENT_ID"
+        --tenant "$AZUREAD_TENANT_ID"
+        --federated-token "$AZURE_ID_TOKEN"
+        --allow-no-subscriptions
+    - az account set --subscription "$AZUREAD_SUBSCRIPTION_ID"
+
 
 # No Azure credentials needed, so this runs on every branch and MR.
 validate:
@@ -71,6 +87,12 @@ apply:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
       allow_failure: false
+
+app-deploy:
+  stage: app-deploy
+  extends: .azure-app
+  script:
+    - az webapp deploy --resource-group compute-rg --name <your-app> --src-path app.zip --type zip
 
 
 destroy:

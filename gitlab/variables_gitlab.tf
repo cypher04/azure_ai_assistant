@@ -29,3 +29,11 @@ resource "gitlab_project_variable" "client_id" {
   masked    = false
   protected = true
 }
+
+resource "gitlab_project_variable" "app_client_id" {
+  project   = data.gitlab_project.project.id
+  key       = "AZUREAD_APP_CLIENT_ID"
+  value     = azuread_application.gitlab_ai_assistant_app.client_id
+  masked    = false
+  protected = true
+}
