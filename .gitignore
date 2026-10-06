@@ -52,5 +52,7 @@ Thumbs.db
 # Logs
 *.log
 
-# pycache
+
+
+# Sensitive files
 __pycache__/
