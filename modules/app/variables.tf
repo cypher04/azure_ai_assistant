@@ -26,3 +26,8 @@ variable "cognitive_account_id" {
   description = "The ID of the Azure Cognitive Account."
   type        = string
 }
+
+variable "subnet_ids" {
+  description = "The IDs of the subnets for the app service plan."
+  type        = list(string)
+}

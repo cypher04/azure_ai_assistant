@@ -49,11 +49,11 @@ resource "azurerm_service_plan" "app-service-plan" {
 resource "azurerm_role_assignment" "app-service-openai-role-assignment" {
   principal_id         = azurerm_linux_web_app.app-service.identity[0].principal_id
   role_definition_name = "Cognitive Services OpenAI User"
-  scope                = azurerm_resource_group.app-rg.id
+  scope                = var.cognitive_account_id
 }
 
 resource "azurerm_role_assignment" "app-service-search-role-assignment" {
   principal_id         = azurerm_linux_web_app.app-service.identity[0].principal_id
   role_definition_name = "Search Index Data Reader"
-  scope                = azurerm_resource_group.app-rg.id
+  scope                = var.cognitive_account_id
 }

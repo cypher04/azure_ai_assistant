@@ -19,6 +19,7 @@ resource "azurerm_cognitive_account" "cognitive-account" {
   sku_name                   = "S0"
   custom_subdomain_name      = "aifoundry${random_string.cognitive_account_suffix.result}"
   project_management_enabled = true
+  
 
 
   identity {
