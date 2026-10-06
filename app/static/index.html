@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Assistant</title>
+  <style>
+    :root { --bg: #f7f7f8; --fg: #1a1a1a; --muted: #666; --card: #fff; --accent: #0b6cbd; --border: #ddd; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #16171a; --fg: #ececec; --muted: #9a9a9a; --card: #22242a; --accent: #4ea1f3; --border: #33353b; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 16px/1.5 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+    main { max-width: 760px; margin: 0 auto; padding: 24px 16px 120px; }
+    h1 { font-size: 1.25rem; margin: 0 0 16px; }
+    .msg { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin: 10px 0; white-space: pre-wrap; }
+    .msg.user { border-left: 3px solid var(--accent); }
+    .msg.error { border-left: 3px solid #d33; }
+    .sources { color: var(--muted); font-size: .85rem; margin-top: 8px; }
+    form { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg); border-top: 1px solid var(--border); padding: 12px 16px; }
+    .row { max-width: 760px; margin: 0 auto; display: flex; gap: 8px; }
+    input { flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--fg); font: inherit; }
+    button { padding: 10px 16px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
+    button:disabled { opacity: .6; cursor: default; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>AI Assistant</h1>
+    <div id="log"></div>
+  </main>
+  <form id="ask">
+    <div class="row">
+      <input id="q" placeholder="Ask a question about your documents…" autocomplete="off" required maxlength="2000">
+      <button id="send">Ask</button>
+    </div>
+  </form>
+  <script>
+    const log = document.getElementById("log");
+    const form = document.getElementById("ask");
+    const input = document.getElementById("q");
+    const send = document.getElementById("send");
+
+    function add(text, cls) {
+      const div = document.createElement("div");
+      div.className = "msg " + cls;
+      div.textContent = text;   // textContent, never innerHTML: model output is untrusted
+      log.appendChild(div);
+      div.scrollIntoView({ behavior: "smooth" });
+      return div;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const question = input.value.trim();
+      if (!question) return;
+      add(question, "user");
+      input.value = "";
+      send.disabled = true;
+      const pending = add("Thinking…", "bot");
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail || res.statusText));
+        pending.textContent = data.answer;
+        if (data.sources.length) {
+          const s = document.createElement("div");
+          s.className = "sources";
+          s.textContent = "Sources: " + data.sources.map((x, i) => `[${i + 1}] ${x.title || x.id}`).join("  ");
+          pending.appendChild(s);
+        }
+      } catch (err) {
+        pending.className = "msg error";
+        pending.textContent = "Error: " + err.message;
+      } finally {
+        send.disabled = false;
+        input.focus();
+      }
+    });
+  </script>
+</body>
+</html>

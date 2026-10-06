@@ -4,6 +4,7 @@
     { "name": "id",       "type": "Edm.String", "key": true, "filterable": true },
     { "name": "content",  "type": "Edm.String", "searchable": true },
     { "name": "title",    "type": "Edm.String", "searchable": true, "sortable": true },
+    { "name": "source",   "type": "Edm.String", "filterable": true },
     { "name": "embedding","type": "Collection(Edm.Single)", "searchable": true,
       "dimensions": 1536, "vectorSearchProfile": "default-profile" }
   ],

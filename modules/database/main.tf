@@ -17,7 +17,7 @@ resource "azurerm_storage_account" "ai_storage" {
   account_tier                  = "Standard"
   account_replication_type      = "LRS"
   https_traffic_only_enabled    = true
-  public_network_access_enabled = false
+  public_network_access_enabled = true
 }
 
 resource "azurerm_storage_container" "documents" {

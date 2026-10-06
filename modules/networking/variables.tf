@@ -17,3 +17,8 @@ variable "cognitive_account_id" {
   description = "The ID of the cognitive account"
   type        = string
 }
+
+variable "ai_storage_id" {
+  description = "The ID of the AI storage account"
+  type        = string
+}
