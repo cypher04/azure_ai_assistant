@@ -22,3 +22,8 @@ variable "ai_storage_id" {
   description = "The ID of the AI storage account"
   type        = string
 }
+
+variable "web_app_id" {
+  description = "The ID of the web app"
+  type        = string
+}

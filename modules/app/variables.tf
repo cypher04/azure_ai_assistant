@@ -25,7 +25,8 @@ variable "search_service_id" {
   type        = string
 }
 
-variable "subnet_ids" {
-  description = "The IDs of the subnets for the app service."
-  type        = list(string)
+
+variable "app_subnet_id" {
+  description = "The ID of the app service subnet."
+  type        = string
 }

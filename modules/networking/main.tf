@@ -55,6 +55,24 @@ resource "azurerm_subnet" "data-spoke-subnet" {
   address_prefixes     = [var.subnet_prefixes["data-spoke-subnet"]]
 }
 
+// dedicated subnet for app service virtual network
+resource "azurerm_subnet" "app-service-subnet" {
+  name                 = "app-service-subnet"
+  resource_group_name  = azurerm_resource_group.networking-rg.name
+  virtual_network_name = azurerm_virtual_network.hub-vnet.name
+  address_prefixes     = [var.subnet_prefixes["app-service-subnet"]]
+
+  delegation {
+    name = "app-service-delegation"
+    service_delegation {
+      name = "Microsoft.Web/serverFarms"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/action"
+      ]
+    }
+  }
+}
+
 
 
 
@@ -125,12 +143,13 @@ resource "azurerm_route_table" "hub-route-table" {
 
 }
 
+
 resource "azurerm_subnet_route_table_association" "hub-subnet-association" {
   subnet_id      = azurerm_subnet.hub-subnet.id
   route_table_id = azurerm_route_table.hub-route-table.id
 }
 
-// user defined route for AI spoke subnet to route traffic through hub virtual network
+///////////////////// user defined route for AI spoke subnet to route traffic through hub virtual network //////////////////////
 resource "azurerm_route_table" "ai-spoke-route-table" {
   name                = "ai-spoke-route-table"
   location            = var.location
@@ -151,7 +170,7 @@ resource "azurerm_subnet_route_table_association" "ai-spoke-subnet-association" 
   route_table_id = azurerm_route_table.ai-spoke-route-table.id
 }
 
-// user defined route for data spoke subnet
+///////////////////// user defined route for data spoke subnet //////////////////////
 resource "azurerm_route_table" "data-spoke-route-table" {
   name                = "data-spoke-route-table"
   location            = var.location
@@ -327,6 +346,12 @@ resource "azurerm_private_dns_zone" "storage-dns-zone" {
   resource_group_name = azurerm_resource_group.networking-rg.name
 }
 
+// private dns for web app
+# resource "azurerm_private_dns_zone" "webapp-dns-zone" {
+#   name                = "privatelink.azurewebsites.net"
+#   resource_group_name = azurerm_resource_group.networking-rg.name
+# }
+
 # // private dns for key vault
 # resource "azurerm_private_dns_zone" "keyvault-dns-zone" {
 #   name                = "privatelink.vaultcore.azure.net"
@@ -349,7 +374,7 @@ resource "azurerm_private_endpoint" "openai-priv-endpoint" {
   }
 
   private_dns_zone_group {
-    name = "openai-dns-zone-group"
+    name                 = "openai-dns-zone-group"
     private_dns_zone_ids = [azurerm_private_dns_zone.openai-dns-zone.id]
   }
 }
@@ -372,10 +397,11 @@ resource "azurerm_private_endpoint" "storage-priv-endpoint" {
     name                           = "storage-privateserviceconnection"
     private_connection_resource_id = var.ai_storage_id
     is_manual_connection           = false
+    subresource_names              = ["blob"]
   }
 
   private_dns_zone_group {
-    name = "storage-dns-zone-group"
+    name                 = "storage-dns-zone-group"
     private_dns_zone_ids = [azurerm_private_dns_zone.storage-dns-zone.id]
   }
 }
@@ -409,3 +435,29 @@ resource "azurerm_private_dns_zone_virtual_network_link" "storage-dns-zone-vnet-
 #   private_dns_zone_name = "privatelink.vaultcore.azure.net"
 # }
 
+///////////////// private endpoint for web app //////////////////////
+# resource "azurerm_private_endpoint" "webapp-priv-endpoint" {
+#   name                = "webapp-priv-endpoint"
+#   location            = var.location
+#   resource_group_name = azurerm_resource_group.networking-rg.name
+#   subnet_id           = azurerm_subnet.ai-spoke-subnet.id
+
+#   private_service_connection {
+#     name                           = "webapp-privateserviceconnection"
+#     private_connection_resource_id = var.web_app_id
+#     is_manual_connection           = false
+#     subresource_names              = ["sites"]
+#   }
+
+#   private_dns_zone_group {
+#     name                 = "webapp-dns-zone-group"
+#     private_dns_zone_ids = [azurerm_private_dns_zone.webapp-dns-zone.id]
+#   }
+# }
+
+# resource "azurerm_private_dns_zone_virtual_network_link" "webapp-dns-zone-vnet-link" {
+#   name                  = "webapp-dns-zone-vnet-link"
+#   resource_group_name   = azurerm_resource_group.networking-rg.name
+#   virtual_network_id    = azurerm_virtual_network.hub-vnet.id
+#   private_dns_zone_name = "azurerm_private_dns_zone.webapp-dns-zone.name"
+# }

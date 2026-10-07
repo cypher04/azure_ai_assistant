@@ -12,11 +12,11 @@ resource "random_string" "app_suffix" {
 
 ///////////////////// linux app service //////////////////////
 resource "azurerm_linux_web_app" "app-service" {
-  name                = "ai-assistant-01"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.app-rg.name
-  service_plan_id     = azurerm_service_plan.app-service-plan.id
-  virtual_network_subnet_id = var.subnet_ids[2]
+  name                      = "ai-assistant-01"
+  location                  = var.location
+  resource_group_name       = azurerm_resource_group.app-rg.name
+  service_plan_id           = azurerm_service_plan.app-service-plan.id
+  virtual_network_subnet_id = var.app_subnet_id
 
   identity {
     type = "SystemAssigned"
