@@ -6,6 +6,7 @@ output "subnet_ids" {
     azure_firewall_subnet_id = azurerm_subnet.AzureFirewallSubnet.id
     ai_spoke_subnet_id       = azurerm_subnet.ai-spoke-subnet.id
     data_spoke_subnet_id     = azurerm_subnet.data-spoke-subnet.id
+    app_service_subnet_id    = azurerm_subnet.app-service-subnet.id
   }
 }
 
@@ -14,5 +15,6 @@ output "route_table_ids" {
     hub_route_table_id        = azurerm_route_table.hub-route-table.id
     ai_spoke_route_table_id   = azurerm_route_table.ai-spoke-route-table.id
     data_spoke_route_table_id = azurerm_route_table.data-spoke-route-table.id
+    # app_service_route_table_id = azurerm_route_table.app-service-route-table.id
   }
 }

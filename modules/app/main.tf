@@ -12,10 +12,11 @@ resource "random_string" "app_suffix" {
 
 ///////////////////// linux app service //////////////////////
 resource "azurerm_linux_web_app" "app-service" {
-  name                = "ai-assistant-01"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.app-rg.name
-  service_plan_id     = azurerm_service_plan.app-service-plan.id
+  name                      = "ai-assistant-01"
+  location                  = var.location
+  resource_group_name       = azurerm_resource_group.app-rg.name
+  service_plan_id           = azurerm_service_plan.app-service-plan.id
+  virtual_network_subnet_id = var.app_subnet_id
 
   identity {
     type = "SystemAssigned"
@@ -55,5 +56,5 @@ resource "azurerm_role_assignment" "app-service-openai-role-assignment" {
 resource "azurerm_role_assignment" "app-service-search-role-assignment" {
   principal_id         = azurerm_linux_web_app.app-service.identity[0].principal_id
   role_definition_name = "Search Index Data Reader"
-  scope                = var.cognitive_account_id
+  scope                = var.search_service_id
 }

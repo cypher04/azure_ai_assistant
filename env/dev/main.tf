@@ -7,6 +7,8 @@ module "networking" {
   subnet_prefixes      = var.subnet_prefixes
   address_space        = var.address_space
   cognitive_account_id = module.compute.cognitive_account_id
+  ai_storage_id        = module.database.ai_storage_id
+  web_app_id           = module.app.web_app_id
 }
 
 module "compute" {
@@ -21,10 +23,11 @@ module "database" {
 }
 
 module "app" {
-  source   = "../../modules/app"
-  location = var.location
-  search_service_id = module.compute.search_service_id
+  source               = "../../modules/app"
+  location             = var.location
   cognitive_account_id = module.compute.cognitive_account_id
-  openai_endpoint = module.compute.openai_endpoint
-  search_endpoint = module.compute.search_endpoint
+  openai_endpoint      = module.compute.openai_endpoint
+  search_endpoint      = module.compute.search_endpoint
+  search_service_id    = module.compute.search_service_id
+  app_subnet_id        = module.networking.subnet_ids["app_service_subnet_id"]
 }
