@@ -93,7 +93,8 @@ app-deploy:
   extends: .azure-app
   script:
     - cd app && python3 -m zipfile -c ../app.zip main.py requirements.txt static && cd ..
-    - az webapp deploy --resource-group app-rg --name ai-assistant-01 --src-path app.zip --type zip
+    - APP_NAME=$(az webapp list --resource-group app-rg --query "[0].name" -o tsv)
+    - az webapp deploy --resource-group app-rg --name "$APP_NAME" --src-path app.zip --type zip
   dependencies:
     - apply
   environment:
