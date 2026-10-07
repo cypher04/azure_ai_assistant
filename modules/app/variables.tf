@@ -26,7 +26,7 @@ variable "search_service_id" {
 }
 
 
-variable "app_subnet_id" {
-  description = "The ID of the app service subnet."
+variable "app_location" {
+  description = "Region for the App Service Plan and web app. Separate from location because this subscription has no App Service quota in East US."
   type        = string
 }

@@ -29,5 +29,5 @@ module "app" {
   openai_endpoint      = module.compute.openai_endpoint
   search_endpoint      = module.compute.search_endpoint
   search_service_id    = module.compute.search_service_id
-  app_subnet_id        = module.networking.subnet_ids["app_service_subnet_id"]
+  app_location         = var.app_location
 }

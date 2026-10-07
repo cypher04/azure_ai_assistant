@@ -12,11 +12,10 @@ resource "random_string" "app_suffix" {
 
 ///////////////////// linux app service //////////////////////
 resource "azurerm_linux_web_app" "app-service" {
-  name                      = "ai-assistant-01"
-  location                  = var.location
-  resource_group_name       = azurerm_resource_group.app-rg.name
-  service_plan_id           = azurerm_service_plan.app-service-plan.id
-  virtual_network_subnet_id = var.app_subnet_id
+  name                = "ai-assistant-${random_string.app_suffix.result}"
+  location            = var.app_location
+  resource_group_name = azurerm_resource_group.app-rg.name
+  service_plan_id     = azurerm_service_plan.app-service-plan.id
 
   identity {
     type = "SystemAssigned"
@@ -26,7 +25,7 @@ resource "azurerm_linux_web_app" "app-service" {
     application_stack {
       python_version = "3.12"
     }
-    app_command_line = "gunicorn -w 2 -k uvicorn.workers.UvicornWorker main:app"
+    app_command_line = "gunicorn -w 2 -k uvicorn.workers.UvicornWorker --timeout 120 main:app"
   }
 
   app_settings = {
@@ -39,9 +38,9 @@ resource "azurerm_linux_web_app" "app-service" {
 ///////////////////// app service plan //////////////////////
 resource "azurerm_service_plan" "app-service-plan" {
   name                = "app-service-plan"
-  location            = var.location
+  location            = var.app_location
   resource_group_name = azurerm_resource_group.app-rg.name
-  sku_name            = "P0v3"
+  sku_name            = "B1"
   os_type             = "Linux"
 }
 
