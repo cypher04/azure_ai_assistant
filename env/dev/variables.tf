@@ -12,3 +12,8 @@ variable "address_space" {
   description = "The address space for the virtual network."
   type        = list(string)
 }
+
+variable "app_location" {
+  description = "Region for the App Service Plan and web app (East US has no App Service quota on this subscription)."
+  type        = string
+}
