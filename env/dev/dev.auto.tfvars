@@ -1,4 +1,4 @@
-location = "East us"
+location     = "East us"
 app_location = "centralus"
 subnet_prefixes = {
   hub-subnet          = "10.1.0.0/24",
