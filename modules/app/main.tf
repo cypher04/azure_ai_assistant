@@ -41,7 +41,7 @@ resource "azurerm_service_plan" "app-service-plan" {
   name                = "app-service-plan"
   location            = var.location
   resource_group_name = azurerm_resource_group.app-rg.name
-  sku_name            = "B1"
+  sku_name            = "P0v3"
   os_type             = "Linux"
 }
 
