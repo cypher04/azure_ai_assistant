@@ -3,10 +3,7 @@ variable "location" {
   type        = string
 }
 
-variable "resource_group_name" {
-  description = "The name of the resource group."
-  type        = string
-}
+
 variable "search_endpoint" {
   description = "The endpoint of the Azure Search service."
   type        = string
@@ -17,17 +14,18 @@ variable "openai_endpoint" {
   type        = string
 }
 
-variable "search_service_id" {
-  description = "The ID of the Azure Search service."
-  type        = string
-}
-
 variable "cognitive_account_id" {
   description = "The ID of the Azure Cognitive Account."
   type        = string
 }
 
+
+variable "search_service_id" {
+  description = "The ID of the Azure Search service."
+  type        = string
+}
+
 variable "subnet_ids" {
-  description = "The IDs of the subnets for the app service plan."
+  description = "The IDs of the subnets for the app service."
   type        = list(string)
 }
