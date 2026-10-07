@@ -92,7 +92,17 @@ app-deploy:
   stage: app-deploy
   extends: .azure-app
   script:
-    - az webapp deploy --resource-group compute-rg --name <your-app> --src-path app.zip --type zip
+    - cd app && python3 -m zipfile -c ../app.zip main.py requirements.txt static && cd ..
+    - az webapp deploy --resource-group app-rg --name ai-assistant-01 --src-path app.zip --type zip
+  dependencies:
+    - apply
+  environment:
+    name: main
+  resource_group: app-rg
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: false
 
 
 destroy:
