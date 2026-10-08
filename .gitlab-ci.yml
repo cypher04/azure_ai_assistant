@@ -4,6 +4,7 @@ stages:
   - plan
   - apply
   - app-deploy
+  - ingest
   - destroy
   
 variables:
@@ -104,6 +105,25 @@ app-deploy:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
       allow_failure: false
+
+ingest:
+  stage: ingest
+  extends: .azure-app
+  script:
+    - echo "Running ingest job..."
+    - export AZURE_STORAGE_ACCOUNT_URL=$(az storage account list --resource-group database-rg --query "[0].primaryEndpoints.blob" -o tsv)
+    - export AZURE_SEARCH_ENDPOINT="https://$(az search service list --resource-group compute-rg --query "[0].name" -o tsv).search.windows.net"
+    - export AZURE_OPENAI_ENDPOINT=$(az cognitiveservices account list --resource-group compute-rg --query "[0].properties.endpoint" -o tsv)
+    - python3 -m venv .venv && . .venv/bin/activate
+    - pip3 install -r search/requirements.txt
+    - python3 search/ingest.py
+  environment:
+    name: main
+  resource_group: app-rg
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+
 
 
 destroy:

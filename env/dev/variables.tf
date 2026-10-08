@@ -17,3 +17,8 @@ variable "app_location" {
   description = "Region for the App Service Plan and web app (East US has no App Service quota on this subscription)."
   type        = string
 }
+
+variable "ingest_principal_id" {
+  description = "The object ID of the user or service principal that runs the ingestion script."
+  type        = string
+}
