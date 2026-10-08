@@ -37,3 +37,21 @@ resource "azurerm_role_assignment" "ingest-search-service-role-assignment" {
   role_definition_name = "Search Service Contributor"
   scope                = module.compute.search_service_id
 }
+
+resource "azurerm_role_assignment" "ingest-storage-role-assignment" {
+  principal_id         = var.ingest_principal_id
+  role_definition_name = "Storage Blob Data Contributor"
+  scope                = module.database.ai_storage_id
+}
+
+resource "azurerm_role_assignment" "ingest-search-role-assignment" {
+  principal_id         = var.ingest_principal_id
+  role_definition_name = "Search Index Data Contributor"
+  scope                = module.compute.search_service_id
+}
+
+resource "azurerm_role_assignment" "ingest-openai-role-assignment" {
+  principal_id         = var.ingest_principal_id
+  role_definition_name = "Cognitive Services OpenAI User"
+  scope                = module.compute.cognitive_account_id
+}
