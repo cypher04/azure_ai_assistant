@@ -27,3 +27,9 @@ resource "azurerm_role_assignment" "gitlab_ai_assistant_app_role_assignment" {
   principal_id         = azuread_service_principal.gitlab_ai_assistant_sp_app.object_id
 }
 
+/////////////////////   reader role for app (ingest job looks up endpoints)     //////////////////////
+resource "azurerm_role_assignment" "gitlab_ai_assistant_app_reader_role_assignment" {
+  scope                = "/subscriptions/${var.subscription_id}"
+  role_definition_name = "Reader"
+  principal_id         = azuread_service_principal.gitlab_ai_assistant_sp_app.object_id
+}
